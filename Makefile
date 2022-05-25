@@ -1,7 +1,7 @@
 default: web
 
 web:
-	./ve python -m scripts.web
+	./ve flask run
 
 dev:
 	./ve pip install -r requirements.txt -r requirements-dev.txt

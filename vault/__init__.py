@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 
 from . import default_settings
+from .utils import load_module_recursively
 
 db: Any = SQLAlchemy()
 
@@ -42,6 +43,7 @@ class Application(Flask):
 
         if kwargs.get('web', True):
             self.prepare_login_manager()
+            self.load_views()
 
         if not self.debug:
             hdl = StreamHandler(sys.stderr)
@@ -53,6 +55,11 @@ class Application(Flask):
             hdl.setLevel(logging.INFO)
             self.logger.addHandler(hdl)
             self.logger.setLevel(logging.INFO)
+
+    def load_views(self) -> None:
+        # pylint: disable=import-outside-toplevel
+        from vault import views
+        load_module_recursively(views)
 
 
 app = Application()
