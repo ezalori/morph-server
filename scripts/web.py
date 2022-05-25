@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
-
 from vault import app
+
 app.ready()
 
 
@@ -18,6 +17,5 @@ def load_module_recursively(module):
 from vault import views
 load_module_recursively(views)
 
-
-if __name__ == "__main__":
-    app.run('0.0.0.0', 5050, threaded=True)
+if __name__ == '__main__':
+    app.run('127.0.0.1', 5050, threaded=True)
