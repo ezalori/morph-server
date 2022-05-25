@@ -1,3 +1,3 @@
-from vault import app
+from vault import app, configure_web
 
-app.ready()
+configure_web()
