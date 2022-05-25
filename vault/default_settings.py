@@ -1,10 +1,5 @@
 APPLICATION_ROOT = ''
 SESSION_COOKIE_NAME = 'vault_session'
-
-# app.debug
-ENV = 'development'
-DEBUG = True
-
 SECRET_KEY = 'This should be replaced on production'
 
 # API & JSON

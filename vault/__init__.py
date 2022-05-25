@@ -1,5 +1,8 @@
 import os
+import sys
+import logging
 from typing import Any
+from logging import StreamHandler
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -40,12 +43,7 @@ class Application(Flask):
         if kwargs.get('web', True):
             self.prepare_login_manager()
 
-        if not app.debug:
-            # pylint: disable=import-outside-toplevel
-            import logging
-            from logging import StreamHandler
-            import sys
-
+        if not self.debug:
             hdl = StreamHandler(sys.stderr)
             fmt = logging.Formatter((
                 '[%(asctime)s %(levelname)-9s '
@@ -53,8 +51,8 @@ class Application(Flask):
 
             hdl.setFormatter(fmt)
             hdl.setLevel(logging.INFO)
-            app.logger.addHandler(hdl)
-            app.logger.setLevel(logging.INFO)
+            self.logger.addHandler(hdl)
+            self.logger.setLevel(logging.INFO)
 
 
 app = Application()

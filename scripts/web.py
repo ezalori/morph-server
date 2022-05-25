@@ -5,7 +5,7 @@ app.ready()
 
 def load_module_recursively(module):
     import pkgutil
-    for loader, name, ispkg in pkgutil.iter_modules(module.__path__):
+    for _, name, ispkg in pkgutil.iter_modules(module.__path__):
         module_name = '%s.%s' % (module.__name__, name)
         print('loading view: %s' % module_name)
         _module = __import__(module_name, fromlist=[''])
@@ -16,6 +16,3 @@ def load_module_recursively(module):
 
 from vault import views
 load_module_recursively(views)
-
-if __name__ == '__main__':
-    app.run('127.0.0.1', 5050, threaded=True)
