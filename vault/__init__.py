@@ -26,10 +26,12 @@ def create_app(web: bool = True):
         configure_login_manager(app)
         configure_views(app)
 
+    configure_jobs(app)
+
     return app
 
 
-def configure_login_manager(app):
+def configure_login_manager(app: Flask):
     login_manager = LoginManager()
     login_manager.init_app(app)
 
@@ -40,8 +42,14 @@ def configure_login_manager(app):
         return UserService.get(id)
 
 
-def configure_views(app):
+def configure_views(app: Flask):
     with app.app_context():
         # pylint: disable=import-outside-toplevel
         from vault import views
         load_module_recursively(views)
+
+def configure_jobs(app: Flask):
+    with app.app_context():
+        # pylint: disable=import-outside-toplevel
+        from vault import jobs
+        load_module_recursively(jobs)

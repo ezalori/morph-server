@@ -18,8 +18,7 @@ def exports(rule, **options):
 
         api_rule = '{}/api{}'.format(current_app.config['APPLICATION_ROOT'], rule)
         endpoint = options.pop('endpoint', api_rule)
-        current_app.add_url_rule(api_rule, endpoint,
-                         view_func=decorated_view, **options)
+        current_app.add_url_rule(api_rule, endpoint, view_func=decorated_view, **options)
         return decorated_view
     return decorator
 

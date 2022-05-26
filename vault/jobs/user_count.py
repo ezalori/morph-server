@@ -1,11 +1,14 @@
 import logging
 
+from flask import current_app
+
 from vault import db
 from vault.models.user import User
 
 logger = logging.getLogger(__name__)
 
 
+@current_app.cli.command('user_count')
 def run():
     count = db.session.query(User).count()
     logger.info('Result: %d', count)
