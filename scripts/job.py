@@ -1,9 +1,12 @@
 import sys
 
-from vault import app
+import flask.cli
 
 
 def main() -> int:
+    flask.cli.load_dotenv()
+    from vault import app
+
     args = sys.argv
     job_name = args.pop(1)
     mod_name = 'vault.jobs.%s' % job_name

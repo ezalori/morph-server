@@ -45,3 +45,5 @@ def configure_views():
 
 app = create_app()
 db: Any = SQLAlchemy(app)
+
+from . import jobs
