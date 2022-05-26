@@ -1,5 +1,7 @@
 import os
+import logging
 from typing import Any
+from pathlib import Path
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -15,8 +17,11 @@ def create_app() -> Flask:
     if 'APP_CONFIG' in os.environ:
         app.config.from_envvar('APP_CONFIG', silent=False)
     else:
-        config_local = os.path.abspath(os.path.join(os.path.basename(__file__), '../config_local.py')) # TODO
+        config_local = Path(__file__).parent.parent.joinpath('config_local.py')
         app.config.from_pyfile(config_local, silent=True)
+
+    if not app.debug:
+        app.logger.setLevel(logging.INFO)
 
     return app
 
