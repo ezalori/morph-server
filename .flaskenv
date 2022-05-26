@@ -1,3 +1,3 @@
-FLASK_APP=scripts.web
+FLASK_APP=vault
 FLASK_ENV=development
 FLASK_RUN_PORT=5050

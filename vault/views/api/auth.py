@@ -1,9 +1,12 @@
+import logging
+
 from flask import request
 from flask_login import login_user, logout_user, login_required, current_user
 
-from vault import app
 from vault.services import UserService
 from vault.views.api import make_api_response, exports, APIException
+
+logger = logging.getLogger(__name__)
 
 
 @exports('/login', methods=['POST'])
@@ -18,7 +21,7 @@ def login() -> tuple:
         raise APIException('Invalid username or password.')
 
     login_user(user)
-    app.logger.info(f'{username} Login')
+    logger.info(f'{username} Login')
 
     return make_api_response({
         'id': user.user.id,

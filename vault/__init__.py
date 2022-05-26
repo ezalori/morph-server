@@ -8,8 +8,10 @@ from flask_login import LoginManager
 from . import default_settings
 from .utils import load_module_recursively
 
+db: Any = SQLAlchemy()
 
-def create_app():
+
+def create_app(web: bool = True):
     app = Flask(__name__)
     app.config.from_object(default_settings)
     if 'APP_CONFIG' in os.environ:
@@ -18,15 +20,16 @@ def create_app():
         config_local = os.path.abspath(os.path.join(os.path.basename(__file__), '../config_local.py')) # TODO
         app.config.from_pyfile(config_local, silent=True)
 
+    db.init_app(app)
+
+    if web:
+        configure_login_manager(app)
+        configure_views(app)
+
     return app
 
 
-def configure_web():
-    configure_login_manager()
-    configure_views()
-
-
-def configure_login_manager():
+def configure_login_manager(app):
     login_manager = LoginManager()
     login_manager.init_app(app)
 
@@ -37,13 +40,8 @@ def configure_login_manager():
         return UserService.get(id)
 
 
-def configure_views():
-    # pylint: disable=import-outside-toplevel
-    from vault import views
-    load_module_recursively(views)
-
-
-app = create_app()
-db: Any = SQLAlchemy(app)
-
-from . import jobs
+def configure_views(app):
+    with app.app_context():
+        # pylint: disable=import-outside-toplevel
+        from vault import views
+        load_module_recursively(views)
