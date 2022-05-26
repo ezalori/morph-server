@@ -1,7 +1,9 @@
 import os
 from typing import Any
 
+import click
 from flask import Flask
+from flask.cli import FlaskGroup
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 
@@ -11,7 +13,7 @@ from .utils import load_module_recursively
 db: Any = SQLAlchemy()
 
 
-def create_app(web: bool = True):
+def create_app(web: bool = True) -> Flask:
     app = Flask(__name__)
     app.config.from_object(default_settings)
     if 'APP_CONFIG' in os.environ:
@@ -26,7 +28,8 @@ def create_app(web: bool = True):
         configure_login_manager(app)
         configure_views(app)
 
-    configure_jobs(app)
+    else:
+        configure_jobs(app)
 
     return app
 
@@ -48,8 +51,14 @@ def configure_views(app: Flask):
         from vault import views
         load_module_recursively(views)
 
+
 def configure_jobs(app: Flask):
     with app.app_context():
         # pylint: disable=import-outside-toplevel
         from vault import jobs
         load_module_recursively(jobs)
+
+
+@click.group(cls=FlaskGroup, create_app=lambda: create_app(web=False), add_default_commands=False)
+def cli():
+    """Management script for the Vault application."""
