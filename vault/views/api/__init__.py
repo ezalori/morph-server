@@ -1,9 +1,8 @@
-import logging
 from functools import wraps
 
-from flask import jsonify, current_app
+from flask import jsonify
 
-logger = logging.getLogger(__name__)
+from vault import app
 
 
 def exports(rule, **options):
@@ -13,12 +12,12 @@ def exports(rule, **options):
     def decorator(fn):
         @wraps(fn)
         def decorated_view(*args, **kwargs):
-            logger.debug("API: %s.%s" % (fn.__module__, fn.__name__))
+            app.logger.debug("API: %s.%s" % (fn.__module__, fn.__name__))
             return fn(*args, **kwargs)
 
-        api_rule = '{}/api{}'.format(current_app.config['APPLICATION_ROOT'], rule)
+        api_rule = '{}/api{}'.format(app.config['APPLICATION_ROOT'], rule)
         endpoint = options.pop('endpoint', api_rule)
-        current_app.add_url_rule(api_rule, endpoint, view_func=decorated_view, **options)
+        app.add_url_rule(api_rule, endpoint, view_func=decorated_view, **options)
         return decorated_view
     return decorator
 
@@ -43,7 +42,7 @@ class APIException(Exception):
         return self.message
 
 
-@current_app.errorhandler(APIException)
+@app.errorhandler(APIException)
 def handle_api_exception(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
@@ -73,7 +72,7 @@ def make_api_response(payload=None, message=None, statusCode=200):
 #
 
 
-@current_app.errorhandler(400)
+@app.errorhandler(400)
 def bad_request(error):
     return jsonify({
         'status': 'fail',
@@ -82,7 +81,7 @@ def bad_request(error):
     }), 400
 
 
-@current_app.errorhandler(401)
+@app.errorhandler(401)
 def unauthorized(error):
     return jsonify({
         'status': 'fail',
@@ -91,7 +90,7 @@ def unauthorized(error):
     }), 401
 
 
-@current_app.errorhandler(403)
+@app.errorhandler(403)
 def forbidden(error):
     return jsonify({
         'status': 'fail',
@@ -100,7 +99,7 @@ def forbidden(error):
     }), 403
 
 
-@current_app.errorhandler(404)
+@app.errorhandler(404)
 def page_not_found(error):
     return jsonify({
         'status': 'fail',
@@ -109,7 +108,7 @@ def page_not_found(error):
     }), 404
 
 
-@current_app.errorhandler(500)
+@app.errorhandler(500)
 def internal_server_error(error):
     return jsonify({
         'status': 'fail',
@@ -118,6 +117,6 @@ def internal_server_error(error):
     }), 500
 
 
-@current_app.route('/api/ping')
+@app.route('/api/ping')
 def ping():
     return 'pong'

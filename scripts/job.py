@@ -1,15 +1,17 @@
 import sys
 
-from vault import create_app
+import flask.cli
 
 
 def main() -> int:
+    flask.cli.load_dotenv()
+    from vault import app
+
     args = sys.argv
     job_name = args.pop(1)
     mod_name = 'vault.jobs.%s' % job_name
     mod = __import__(mod_name, fromlist=['*'])
 
-    app = create_app(web=False)
     with app.app_context():
         mod.run(*sys.argv[1:])
 

@@ -11,5 +11,26 @@
 ```
 /usr/local/opt/python@3.8/bin/python3 -m venv .virtualenv
 make dev
-make
+make web
+```
+
+Run job:
+
+```
+./ve python scripts/job.py user_count
+```
+
+## Production
+
+Set environment variables, or create `.env` file:
+
+```
+FLASK_ENV=production
+APP_CONFIG=/path/to/production_settings.py
+```
+
+Start WSGI server:
+
+```
+waitress-serve --port=5050 scripts.web:app
 ```
